@@ -1,23 +1,28 @@
-from openai import OpenAI
-import os
+# test_anthropic_key.py
+# Simple code to test Anthropic API key directly in Python
+# Install library first: pip install anthropic
 
-# ✅ Step 1: Set your API key here OR in environment variable
-# You can either:
-# Option 1: Hardcode temporarily (for testing only)
-# client = OpenAI(api_key="your_api_key_here")
+from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 
-# Option 2 (Recommended): Use environment variable
-#    setx OPENAI_API_KEY "your_api_key_here"   <-- Run this once in Windows Command Prompt
-# Then just do:
-client = OpenAI()
+# 👇 Paste your Anthropic API key here
+ANTHROPIC_API_KEY = "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"
 
-# ✅ Step 2: Simple test call
+# Initialize client
+client = Anthropic(api_key=ANTHROPIC_API_KEY)
+
+# Prepare a tiny test prompt
+prompt = f"{HUMAN_PROMPT} Say 'OK'. {AI_PROMPT}"
+
 try:
-    response = client.models.list()
-    print("✅ API key works! Connection successful.")
-    print("Here are some available models:")
-    for model in response.data[:5]:  # show only first 5
-        print(" -", model.id)
+    response = client.completions.create(
+        model="claude-3.5",          # You can change to claude-3-opus or claude-3-sonnet if available
+        prompt=prompt,
+        max_tokens_to_sample=5       # small response
+    )
+
+    print("✅ API key works! Response from model:")
+    print(response.completion.strip())
+
 except Exception as e:
-    print("❌ Error: API key might be invalid or not set correctly.")
-    print("Details:", e)
+    print("❌ Something went wrong:")
+    print(e)
